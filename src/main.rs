@@ -1,4 +1,5 @@
 use chrono::prelude::*;
+use sunrise::Azimuth;
 
 const USAGE: &str = concat!("Usage: ", env!("CARGO_BIN_NAME"), " <lat> <lon>");
 
@@ -51,12 +52,29 @@ fn main() {
     });
 
     let today = Local::today();
-    let (sunrise, sunset) =
-        sunrise::sunrise_sunset(lat, lon, today.year(), today.month(), today.day());
-
-    println!(
-        "{}\t{}",
-        Local.timestamp(sunrise, 0).to_rfc3339(),
-        Local.timestamp(sunset, 0).to_rfc3339()
-    );
+    for (name, azimuth) in [
+        ("Official", Azimuth::Official),
+        ("Civil", Azimuth::Civil),
+        ("Nautical", Azimuth::Nautical),
+        ("Astronomical", Azimuth::Astronomical),
+    ] {
+        {
+            let angle = azimuth.angle();
+            let (sunrise, sunset) = sunrise::time_of_transit(
+                lat,
+                lon,
+                today.year(),
+                today.month(),
+                today.day(),
+                azimuth,
+            );
+            println!(
+                "{name} ({angle:.3}\u{b0}):\t{sunrise:?}\t{sunset:?}",
+                name = name,
+                angle = angle,
+                sunrise = Local.timestamp(sunrise, 0),
+                sunset = Local.timestamp(sunset, 0)
+            );
+        };
+    }
 }
