@@ -8,9 +8,13 @@ edition = "2021"
 [lib]
 crate-type = ["rlib", "cdylib"]
 
+[features]
+default = ["wee_alloc"]
+
 [dependencies]
 chrono = "0.4.19"
 # sunrise = { git = "https://github.com/mklein994/rust-sunrise" }
+wee_alloc = { version = "0.4", optional = true }
 sunrise = { git = "https://github.com/DAPYXY/rust-sunrise", branch = "twilight" }
 wasm-bindgen = "0.2.78"
 
