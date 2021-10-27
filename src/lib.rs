@@ -7,6 +7,10 @@ use error::Error;
 use sunrise::Azimuth;
 use wasm_bindgen::prelude::*;
 
+#[cfg(feature = "wee_alloc")]
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
 /// Geographic coordinates
 pub struct Coord {
     /// latitude
@@ -80,20 +84,19 @@ impl FromStr for AzimuthWasm {
 pub fn get_sunrise_sunset(
     lat: f64,
     lon: f64,
-    date: &str,
+    year: i32,
+    month: u32,
+    day: u32,
     azimuth: &str,
-) -> Result<Vec<i64>, JsValue> {
-    let date = NaiveDate::parse_from_str(date, "%Y-%m-%d")
-        .map_err(|err| JsValue::from_str(&err.to_string()))?;
-
+) -> Vec<i64> {
     let (sunrise, sunset) = sunrise::time_of_transit(
         lat,
         lon,
-        date.year(),
-        date.month(),
-        date.day(),
-        azimuth.parse::<AzimuthWasm>()?.0,
+        year,
+        month,
+        day,
+        azimuth.parse::<AzimuthWasm>().unwrap().0,
     );
 
-    Ok(vec![sunrise * 1000, sunset * 1000])
+    vec![sunrise, sunset]
 }
