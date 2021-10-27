@@ -5,8 +5,17 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+crate-type = ["rlib", "cdylib"]
+
 [dependencies]
 chrono = "0.4.19"
 # sunrise = { git = "https://github.com/mklein994/rust-sunrise" }
 sunrise = { git = "https://github.com/DAPYXY/rust-sunrise", branch = "twilight" }
 wasm-bindgen = "0.2.78"
+
+[package.metadata.wasm-pack.profile.dev]
+wasm-opt = false
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
