@@ -35,7 +35,7 @@ impl Coord {
     }
 }
 
-pub fn run(coord: Coord) {
+pub fn run(coord: &Coord) {
     let today = Local::today();
     for (name, azimuth) in [
         ("Official", Azimuth::Official),

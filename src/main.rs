@@ -9,5 +9,5 @@ fn main() {
         std::process::exit(1);
     });
 
-    sunrise_cli::run(coord);
+    sunrise_cli::run(&coord);
 }
