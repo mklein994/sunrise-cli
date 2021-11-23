@@ -1,4 +1,5 @@
 mod error;
+use error::Error;
 
 #[cfg(not(target_family = "wasm"))]
 pub mod cli;

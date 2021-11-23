@@ -1,4 +1,4 @@
-use super::error::Error;
+use crate::Error;
 use chrono::prelude::*;
 use sunrise::Azimuth;
 
@@ -21,7 +21,7 @@ impl Coord {
         {
             Ok(Self { lat, lon })
         } else {
-            Err(Error::Missing)
+            Err(error::CliError::Missing.into())
         }
     }
 }
@@ -53,4 +53,23 @@ pub fn run(coord: &Coord) {
             );
         };
     }
+}
+
+pub mod error {
+    use std::fmt;
+
+    #[derive(Debug)]
+    pub enum CliError {
+        Missing,
+    }
+
+    impl fmt::Display for CliError {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            match self {
+                Self::Missing => write!(f, "latitude and longitude are required"),
+            }
+        }
+    }
+
+    impl std::error::Error for CliError {}
 }
