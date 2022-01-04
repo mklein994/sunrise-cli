@@ -1,4 +1,6 @@
 mod error;
+
+#[cfg(not(target_family = "wasm"))]
 use error::Error;
 
 #[cfg(not(target_family = "wasm"))]

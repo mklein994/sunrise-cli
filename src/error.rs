@@ -23,6 +23,7 @@ impl From<std::num::ParseFloatError> for Error {
     }
 }
 
+#[cfg(not(target_family = "wasm"))]
 impl From<crate::cli::error::CliError> for Error {
     fn from(err: crate::cli::error::CliError) -> Self {
         Self::Cli(err)
