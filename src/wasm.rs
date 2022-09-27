@@ -28,7 +28,6 @@ impl From<Azimuth> for SunriseAzimuth {
 }
 
 #[wasm_bindgen(js_name = "getSunriseSunset")]
-#[must_use]
 pub fn get_sunrise_sunset(
     lat: f64,
     lon: f64,
