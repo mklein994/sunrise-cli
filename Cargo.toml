@@ -9,13 +9,13 @@ edition = "2021"
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
-chrono = "0.4.19"
+chrono = "0.4.23"
 # sunrise = { git = "https://github.com/mklein994/rust-sunrise" }
 sunrise = { git = "https://github.com/DAPYXY/rust-sunrise", branch = "twilight" }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
 wee_alloc = "0.4"
-wasm-bindgen = "0.2.78"
+wasm-bindgen = "0.2.84"
 
 [package.metadata.wasm-pack.profile.dev]
 wasm-opt = false
