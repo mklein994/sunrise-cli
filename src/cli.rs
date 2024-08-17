@@ -1,5 +1,5 @@
 use crate::Error;
-use chrono::prelude::*;
+use jiff::{tz::TimeZone, Timestamp, Zoned};
 use sunrise::Azimuth;
 
 /// Geographic coordinates
@@ -27,7 +27,7 @@ impl Coord {
 }
 
 pub fn run(coord: &Coord) {
-    let today = Local::now();
+    let today = Zoned::now();
     for (name, azimuth) in [
         ("Official", Azimuth::Official),
         ("Civil", Azimuth::Civil),
@@ -39,17 +39,17 @@ pub fn run(coord: &Coord) {
             let (sunrise, sunset) = sunrise::time_of_transit(
                 coord.lat,
                 coord.lon,
-                today.year(),
-                today.month(),
-                today.day(),
+                today.year().into(),
+                today.month().try_into().unwrap(),
+                today.day().try_into().unwrap(),
                 azimuth,
             );
             println!(
                 "{name} ({angle:.3}\u{b0}):\t{sunrise:?}\t{sunset:?}",
                 name = name,
                 angle = angle,
-                sunrise = Local.timestamp_opt(sunrise, 0).unwrap(),
-                sunset = Local.timestamp_opt(sunset, 0).unwrap()
+                sunrise = Zoned::new(Timestamp::from_second(sunrise).unwrap(), TimeZone::system()),
+                sunset = Zoned::new(Timestamp::from_second(sunset).unwrap(), TimeZone::system())
             );
         };
     }
