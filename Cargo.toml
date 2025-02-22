@@ -9,7 +9,7 @@ edition = "2021"
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
-jiff = { version = "0.1.5", features = ["js"] }
+jiff = { version = "0.2.1", features = ["js"] }
 # sunrise = { git = "https://github.com/mklein994/rust-sunrise" }
 sunrise = { git = "https://github.com/DAPYXY/rust-sunrise", branch = "twilight" }
 
