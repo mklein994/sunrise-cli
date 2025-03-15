@@ -1,6 +1,6 @@
 use crate::Error;
-use jiff::{tz::TimeZone, Timestamp, Zoned};
-use sunrise::Azimuth;
+use jiff::{Zoned, tz::TimeZone};
+use sunrise::{DawnType, SolarDay, SolarEvent};
 
 /// Geographic coordinates
 pub struct Coord {
@@ -28,28 +28,32 @@ impl Coord {
 
 pub fn run(coord: &Coord) {
     let today = Zoned::now();
-    for (name, azimuth) in [
-        ("Official", Azimuth::Official),
-        ("Civil", Azimuth::Civil),
-        ("Nautical", Azimuth::Nautical),
-        ("Astronomical", Azimuth::Astronomical),
+    for (name, event) in [
+        (
+            "Astronomical Dawn",
+            SolarEvent::Dawn(DawnType::Astronomical),
+        ),
+        ("Nautical Dawn", SolarEvent::Dawn(DawnType::Nautical)),
+        ("Civil Dawn", SolarEvent::Dawn(DawnType::Civil)),
+        ("Sunrise", SolarEvent::Sunrise),
+        ("Sunset", SolarEvent::Sunset),
+        ("Civil Dusk", SolarEvent::Dusk(DawnType::Civil)),
+        ("Nautical Dusk", SolarEvent::Dusk(DawnType::Nautical)),
+        (
+            "Astronomical Dusk",
+            SolarEvent::Dusk(DawnType::Astronomical),
+        ),
     ] {
         {
-            let angle = azimuth.angle();
-            let (sunrise, sunset) = sunrise::time_of_transit(
-                coord.lat,
-                coord.lon,
-                today.year().into(),
-                today.month().try_into().unwrap(),
-                today.day().try_into().unwrap(),
-                azimuth,
-            );
+            let time = SolarDay::new(
+                sunrise::Coordinates::new(coord.lat, coord.lon).unwrap(),
+                today.date(),
+            )
+            .event_time(event);
             println!(
-                "{name} ({angle:.3}\u{b0}):\t{sunrise:?}\t{sunset:?}",
+                "{name}:\t{time:?}",
                 name = name,
-                angle = angle,
-                sunrise = Zoned::new(Timestamp::from_second(sunrise).unwrap(), TimeZone::system()),
-                sunset = Zoned::new(Timestamp::from_second(sunset).unwrap(), TimeZone::system())
+                time = time.to_zoned(TimeZone::system())
             );
         };
     }
