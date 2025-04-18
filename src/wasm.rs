@@ -1,43 +1,45 @@
-use std::str::FromStr;
-use sunrise::Azimuth as SunriseAzimuth;
+use sunrise::{DawnType, SolarDay, SolarEvent};
 use wasm_bindgen::prelude::*;
 
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
-struct Azimuth(SunriseAzimuth);
+pub struct Event(SolarEvent);
 
-impl FromStr for Azimuth {
-    type Err = String;
+impl std::str::FromStr for Event {
+    type Err = &'static str;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "Official" => Ok(Self(SunriseAzimuth::Official)),
-            "Civil" => Ok(Self(SunriseAzimuth::Civil)),
-            "Nautical" => Ok(Self(SunriseAzimuth::Nautical)),
-            "Astronomical" => Ok(Self(SunriseAzimuth::Astronomical)),
-            _ => Err(format!("Invalid azimuth: {:?}", s)),
+            "dawn-astronomical" => Ok(Self(SolarEvent::Dawn(DawnType::Astronomical))),
+            "dawn-nautical" => Ok(Self(SolarEvent::Dawn(DawnType::Nautical))),
+            "dawn-civil" => Ok(Self(SolarEvent::Dawn(DawnType::Civil))),
+            "sunrise" => Ok(Self(SolarEvent::Sunrise)),
+            "sunset" => Ok(Self(SolarEvent::Sunset)),
+            "dusk-civil" => Ok(Self(SolarEvent::Dusk(DawnType::Civil))),
+            "dusk-nautical" => Ok(Self(SolarEvent::Dusk(DawnType::Nautical))),
+            "dusk-astronomical" => Ok(Self(SolarEvent::Dusk(DawnType::Astronomical))),
+            _ => todo!(),
         }
     }
 }
 
-impl From<Azimuth> for SunriseAzimuth {
-    fn from(azimuth: Azimuth) -> Self {
-        azimuth.0
-    }
-}
-
-#[wasm_bindgen(js_name = "getSunriseSunset")]
-pub fn get_sunrise_sunset(
+#[wasm_bindgen(js_name = "getSolarEvents")]
+pub fn get_solar_events(
     lat: f64,
     lon: f64,
-    year: i32,
-    month: u32,
-    day: u32,
-    azimuth: &str,
+    year: i16,
+    month: i8,
+    day: i8,
+    events: Vec<String>,
 ) -> Result<Vec<i64>, JsValue> {
-    let azimuth = azimuth.parse::<Azimuth>()?.into();
-    let (sunrise, sunset) = sunrise::time_of_transit(lat, lon, year, month, day, azimuth);
-
-    Ok(vec![sunrise, sunset])
+    let coords = sunrise::Coordinates::new(lat, lon).unwrap();
+    let today = jiff::civil::Date::new(year, month, day).map_err(JsError::from)?;
+    let mut times = vec![];
+    for event in events {
+        let event = event.parse::<Event>()?.0;
+        let time = SolarDay::new(coords, today).event_time(event);
+        times.push(time.as_second());
+    }
+    Ok(times)
 }
