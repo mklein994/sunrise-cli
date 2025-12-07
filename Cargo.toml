@@ -14,7 +14,6 @@ sunrise = { git = "https://github.com/mklein994/rust-sunrise", branch = "feature
 # sunrise = { git = "https://github.com/DAPYXY/rust-sunrise", branch = "twilight" }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
-wee_alloc = "0.4"
 wasm-bindgen = "0.2.84"
 
 [package.metadata.wasm-pack.profile.dev]

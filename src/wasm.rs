@@ -1,9 +1,6 @@
 use sunrise::{DawnType, SolarDay, SolarEvent};
 use wasm_bindgen::prelude::*;
 
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 pub struct Event(SolarEvent);
 
 impl std::str::FromStr for Event {
