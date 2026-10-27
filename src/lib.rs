@@ -1,3 +1,4 @@
+#[cfg(not(target_family = "wasm"))]
 mod error;
 
 #[cfg(not(target_family = "wasm"))]

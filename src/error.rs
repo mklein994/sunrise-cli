@@ -1,7 +1,6 @@
 #[derive(Debug)]
 pub enum Error {
     ParseFloat(std::num::ParseFloatError),
-    #[cfg(not(target_family = "wasm"))]
     Cli(crate::cli::error::CliError),
 }
 
