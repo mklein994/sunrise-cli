@@ -1,5 +1,5 @@
 use crate::Error;
-use jiff::{Zoned, tz::TimeZone};
+use jiff::Zoned;
 use sunrise::{DawnType, SolarDay, SolarEvent};
 
 /// Geographic coordinates
