@@ -44,18 +44,16 @@ pub fn run(coord: &Coord) {
             SolarEvent::Dusk(DawnType::Astronomical),
         ),
     ] {
+        if let Some(time) = SolarDay::new(
+            sunrise::Coordinates::new(coord.lat, coord.lon).unwrap(),
+            today.date(),
+        )
+        .event_time(event)
         {
-            let time = SolarDay::new(
-                sunrise::Coordinates::new(coord.lat, coord.lon).unwrap(),
-                today.date(),
-            )
-            .event_time(event);
-            println!(
-                "{name}:\t{time:?}",
-                name = name,
-                time = time.to_zoned(TimeZone::system())
-            );
-        };
+            println!("{name}:\t{time:?}");
+        } else {
+            println!("{name}:\t-");
+        }
     }
 }
 

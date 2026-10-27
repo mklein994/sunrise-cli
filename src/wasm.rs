@@ -35,7 +35,9 @@ pub fn get_solar_events(
     let mut times = vec![];
     for event in events {
         let event = event.parse::<Event>()?.0;
-        let time = SolarDay::new(coords, today).event_time(event);
+        let time = SolarDay::new(coords, today)
+            .event_time(event)
+            .expect("TODO: support polar times");
         times.push(time.as_second());
     }
     Ok(times)
